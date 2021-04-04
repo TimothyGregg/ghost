@@ -11,13 +11,13 @@ type vertex struct {
 }
 
 type edge struct {
-	vertices [2]vertex
+	vertices [2]*vertex
 }
 
 type Graph struct {
 	dimensions int
-	vertices   []vertex
-	edges      []edge
+	vertices   []*vertex
+	edges      []*edge
 }
 
 func (g *Graph) Add_Vertex_At(position []int) error {
@@ -43,7 +43,7 @@ func (g *Graph) add_vertex(v vertex) error {
 			}
 		}
 	}
-	g.vertices = append(g.vertices, v)
+	g.vertices = append(g.vertices, &v)
 	return nil
 }
 
@@ -51,7 +51,7 @@ func (v1 *vertex) same_as(v2 *vertex) (bool, error) {
 	if len(v1.position) != len(v2.position) {
 		return false, errors.New(fmt.Sprintf("Vertex of dimension %d cannot be compared to vertex of dimension %d", len(v1.position), len(v2.position)))
 	}
-	for ndx, _ := range v1.position {
+	for ndx := range v1.position {
 		if v1.position[ndx] != v2.position[ndx] {
 			return false, nil
 		}
@@ -59,3 +59,17 @@ func (v1 *vertex) same_as(v2 *vertex) (bool, error) {
 	// This allows for vertices of no dimensions to not be flagged as the same
 	return (len(v1.position) > 0 && len(v2.position) > 0), nil
 }
+
+/*
+// Any number of edges between vertices can be created
+func (g *Graph) add_edge(e edge) error {
+	for _, v_added := range e.vertices {
+		found := false
+		for _, v := range g.vertices {
+			continue
+		}
+	}
+	g.edges = append(g.edges, e)
+	return nil
+}
+*/
