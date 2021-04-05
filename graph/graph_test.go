@@ -8,12 +8,12 @@ import (
 func TestGraph(t *testing.T) {
 	var test_graph Graph
 
-	v1 := vertex{position: []int{0, 0}}
-	v2 := vertex{position: []int{0, 0, 0}}
-	v3 := vertex{position: []int{0, 1}}
-	v4 := vertex{position: []int{0, 0}}
-	v5 := vertex{}
-	v6 := vertex{}
+	v1 := Vertex{position: []int{0, 0}}
+	v2 := Vertex{position: []int{0, 0, 0}}
+	v3 := Vertex{position: []int{0, 1}}
+	v4 := Vertex{position: []int{0, 0}}
+	v5 := Vertex{}
+	v6 := Vertex{}
 
 	// Add Vertex
 	err := test_graph.Add_Vertex_At([]int{0, 0})
@@ -104,20 +104,42 @@ func TestGraph(t *testing.T) {
 
 	// Logic for a graph of dimension 0
 	test_graph = *new(Graph)
-	err = test_graph.add_vertex(vertex{})
+	v1 = Vertex{}
+	v2 = Vertex{}
+	err = test_graph.add_vertex(&v2)
 	if err != nil {
 		t.Log("error should be nil", err)
 		t.Fail()
 	}
-	err = test_graph.add_vertex(vertex{})
+	err = test_graph.add_vertex(&v1)
 	if err != nil {
 		t.Log("error should be nil", err)
 		t.Fail()
 	}
 		// Vertices cannot be the same on a graph with no dimensions (position is irrelevant)
-	err = test_graph.add_vertex(vertex{position: []int{0}})
+	v3 = Vertex{position: []int{0}}
+	err = test_graph.add_vertex(&v3)
 	if err != nil {
 		t.Log("error should be nil", err)
+		t.Fail()
+	}
+
+	// Add edge
+	e1 := Edge{vertices: [2]*Vertex{&v1, &v2}}
+	err = test_graph.add_edge(&e1)
+	if err != nil {
+		t.Log("error should be nil", err)
+		t.Fail()
+	}
+
+	// Add edge with vertex that is not present in graph
+	e2 := Edge{vertices: [2]*Vertex{&v1, &v4}}
+	err = test_graph.add_edge(&e2)
+	if err == nil {
+		t.Log("\"Cannot add edges to a graph that connect to one or more vertices not in that graph\"")
+		t.Fail()
+	} else if strings.Compare(err.Error(), "The edge specified does not connect two vertices within the graph") != 0 {
+		t.Log("Error should be \"The edge specified does not connect two vertices within the graph\"; instead, got", err)
 		t.Fail()
 	}
 }

@@ -7,3 +7,11 @@ import (
 type field struct {
 	backing_graph ghost.Graph
 }
+
+type node struct {
+	vertex ghost.Vertex
+}
+
+type connection struct {
+	edge ghost.Edge
+}

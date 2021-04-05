@@ -6,25 +6,26 @@ import (
 )
 
 
-type vertex struct {
+type Vertex struct {
 	position []int
 }
 
-type edge struct {
-	vertices [2]*vertex
+type Edge struct {
+	vertices [2]*Vertex
 }
 
 type Graph struct {
 	dimensions int
-	vertices   []*vertex
-	edges      []*edge
+	vertices   []*Vertex
+	edges      []*Edge
 }
 
 func (g *Graph) Add_Vertex_At(position []int) error {
-	return g.add_vertex(vertex{position: position})
+	v := Vertex{position: position}
+	return g.add_vertex(&v)
 }
 
-func (g *Graph) add_vertex(v vertex) error {
+func (g *Graph) add_vertex(v *Vertex) error {
 	// On the addition of the first vertex, set the graph dimensions
 	if len(g.vertices) == 0 {
 		g.dimensions = len(v.position)
@@ -34,7 +35,7 @@ func (g *Graph) add_vertex(v vertex) error {
 			return errors.New(fmt.Sprintf("Cannot add a vertex of dimension %d to a graph of dimension %d", len(v.position), g.dimensions))
 		}
 		for _, v_test := range g.vertices {
-			same, err := v_test.same_as(&v)
+			same, err := v_test.same_as(v)
 			if err != nil {
 				panic(err)
 			}
@@ -43,11 +44,11 @@ func (g *Graph) add_vertex(v vertex) error {
 			}
 		}
 	}
-	g.vertices = append(g.vertices, &v)
+	g.vertices = append(g.vertices, v)
 	return nil
 }
 
-func (v1 *vertex) same_as(v2 *vertex) (bool, error) {
+func (v1 *Vertex) same_as(v2 *Vertex) (bool, error) {
 	if len(v1.position) != len(v2.position) {
 		return false, errors.New(fmt.Sprintf("Vertex of dimension %d cannot be compared to vertex of dimension %d", len(v1.position), len(v2.position)))
 	}
@@ -60,16 +61,19 @@ func (v1 *vertex) same_as(v2 *vertex) (bool, error) {
 	return (len(v1.position) > 0 && len(v2.position) > 0), nil
 }
 
-/*
-// Any number of edges between vertices can be created
-func (g *Graph) add_edge(e edge) error {
+func (g *Graph) add_edge(e *Edge) error {
+	// Any number of edges between vertices can be created
+	found := 0
 	for _, v_added := range e.vertices {
-		found := false
 		for _, v := range g.vertices {
-			continue
+			if v == v_added {
+				found += 1
+			}
 		}
+	}
+	if found < 2 {
+		return errors.New("The edge specified does not connect two vertices within the graph")
 	}
 	g.edges = append(g.edges, e)
 	return nil
 }
-*/
